@@ -1,0 +1,142 @@
+﻿@page "/questions/{ProtectedId}"
+@inherits QuestionComponent
+@using BlazorAppQA.Infrastructure.CommandHandlers.InsertNewAnswerHandler
+
+<div class="row">
+    <div class="row justify-content-md-center">
+        @if (SubmittedQuestion != null)
+        {
+            <div class="col-md-10 order-md-1">
+                <div class="list-group-item flex-column align-items-start">
+                    <div class="media position-relative">
+                        <div class="mr-3 mt-1">
+                            <img src="data:image/jpeg;base64,@SubmittedQuestion.User.Base64AvatarImage" style="border:1px solid black;" alt="Smiley face" height="100" width="100">
+                        </div>
+                        <div class="media-body">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mt-0">@SubmittedQuestion.Title</h5>
+                                <small class="text-muted" style="width:60px;margin-bottom:10px;">@SubmittedQuestion.Date.ToString("dd/MM/yyyy HH:mm", System.Globalization.CultureInfo.InvariantCulture)</small>
+                            </div>
+                            <p>@SubmittedQuestion.Description</p>
+                            <div class="mb-1">
+                                @foreach (object tag in (List<object>)SubmittedQuestion.Tags)
+                                {
+                                    <span class="badge badge-secondary" @key="@tag">@tag</span>
+                                }
+                            </div>
+                            <div style="text-align:left;font-style:italic;">
+                                <small class="text-muted">Category: @(SubmittedQuestion.CategoryName).</small>
+                                <small class="text-muted">Submitted by user <a class="text-warning" style="cursor:pointer;" @onclick="@(()=>OnUserClickAsync(SubmittedQuestion.User.ProtectedId))" @onclick:stopPropagation="true">@(SubmittedQuestion.User.UserName).</a></small>
+                            </div>
+                            <hr>
+                            <div class="mr-3 mt-1" style="text-align:left;">
+                                @foreach (object image in (List<object>)SubmittedQuestion.Images)
+                                {
+                                    <img src="/qimages/@($"{image}.jpg")" style="border:1px solid black;cursor:pointer;" @key="@image" @onclick="@(()=>OnViewImageAsync(image.ToString()))" height="50" width="80">
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-10 order-md-2">
+                <div class="col-md-9" style="padding:0px;">
+                    @if (SubmittedQuestion.Answers != null)
+                    {
+                        var answersList = (SubmittedQuestion.Answers as IEnumerable<object>).Select(x => x.ToExpando()).OrderByDescending(a => a.BestAnswer).ThenBy(a => a.Date).ToList();
+                        if (answersList.Any())
+                        {
+                            <h4 style="margin-top:15px;">Answers</h4>
+                            <hr>
+                            @foreach (dynamic answer in answersList)
+                            {
+                                <div class="card mb-3 flex-column align-items-start mt-3 @(answer.BestAnswer ? "border-success":"")" @key="@answer.ProtectedId" style="display:flex;">
+                                    @if (answer.BestAnswer)
+                                    {
+                                        <div style="width:100%;background-color:#93C54B!important;"><small>&nbsp The question owner accepted this as the best answer</small></div>
+                                    }
+                                    <div class="media position-relative" style="padding:15px;width:100%;">
+                                        <div class="media position-relative" style="width:inherit;">
+                                            <div class="mr-3 mt-1">
+                                                <img src="data:image/jpeg;base64,@answer.User.Base64AvatarImage" style="border:1px solid black;" alt="Smiley face" height="40" width="40">
+                                            </div>
+                                            <div class="media-body">
+                                                <p>@answer.Description</p>
+                                                <div style="text-align:left;">
+                                                    <small class="text-muted" style="display:block;">@answer.Date.ToString("dd/MM/yyyy HH:mm", System.Globalization.CultureInfo.InvariantCulture)</small>
+                                                    <small class="text-muted" style="display:block;font-style:italic;">Submitted by user <a class="text-warning" style="cursor:pointer;" @onclick="@(()=>OnUserClickAsync(answer.User.ProtectedId))" @onclick:stopPropagation="true">@($"{answer.User.UserName}.")</a></small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="border-left:1px solid lightgrey;height:100px;" class="mr-2 ml-2"></div>
+                                        <div style="min-width:100px;height:100px;text-align:center;">
+                                            <b><p style="font-size: 20px; margin-bottom: 0px;">@answer.Votes.ToString("D2")</p></b>
+                                            <b><p style="font-size:15px;">Points</p></b>
+                                            <div>
+                                                @if (AuthenticationState.User.Identity.IsAuthenticated)
+                                                {
+                                                    <button class="btn btn-outline-success btn-sm" style="height:29px;" @onclick="@(() => OnVoteForAnswerAsync(answer.ProtectedId, true))"><span class="fa fa-thumbs-up"></span></button>
+                                                    <button class="btn btn-outline-danger btn-sm" style="height:29px;" @onclick="@(() => OnVoteForAnswerAsync(answer.ProtectedId, false))"><span class="fa fa-thumbs-down"></span></button>
+                                                    <button class="btn btn-outline-primary btn-sm" style="height:29px;" @onclick="@(() => OnSelectBestAnswerAsync(answer.ProtectedId))"><span class="fa fa-check"></span></button>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="mt-3"><small>THERE ARE NO ANSWERS YET</small></div>
+                            <hr style=" margin-top:0px;">
+                        }
+                    }
+                    @if (AuthenticationState.User.Identity.IsAuthenticated)
+                    {
+                        <div class="card mb-3">
+                            <h3 class="card-header">Write an answer</h3>
+                            <div class="card-body">
+                                <EditForm Model="InsertNewAnswerCommand" OnValidSubmit="OnSubmitNewAnswerAsync">
+                                    <FluentValidator TValidator="InsertNewAnswerCommandValidator" />
+                                    <div class="form-row mt-3">
+                                        <div class="col-md-12">
+                                            <textarea class="form-control" @bind="InsertNewAnswerCommand.Description" rows="5"></textarea>
+                                            <ValidationMessage For="@(() => InsertNewAnswerCommand.Description)" class="text-danger" style="font-size:x-small;font-style:italic;" />
+                                        </div>
+                                    </div>
+                                    <div class="mt-3" style="text-align:end;">
+                                        <button type="submit" class="btn btn-secondary">Submit</button>
+                                    </div>
+                                </EditForm>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        else
+        {
+            <small>NO DATA AVAILABLE</small>
+        }
+    </div>
+    @if (ShowModalImage)
+    {
+        <div class="modal-backdrop" style="background-color:#00000066!important;">
+            <div class="modal fade show" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display:block">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            @if (!string.IsNullOrWhiteSpace(ModalImage))
+                            {
+                                <img src="/qimages/@($"{ModalImage}.jpg")" style="border:1px solid black;width:100%;" height="400">
+                            }
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="@OnCloseImageAsync">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

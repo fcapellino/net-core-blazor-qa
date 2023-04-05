@@ -1,0 +1,69 @@
+﻿@page
+@model BlazorAppQA.Web.Areas.Identity.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BlazorAppQA.Web</title>
+    <base href="~/" />
+
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/fontawesome.min.css" rel="stylesheet" />
+    <link href="~/css/site.min.css" rel="stylesheet" />
+</head>
+<body>
+    <main role="main" class="container" style="padding-top:30px;padding-bottom:10px;">
+        <div class="row justify-content-md-center">
+            <div class="col-md-5">
+                <form class="form-signin" method="post" enctype="multipart/form-data">
+                    <div class="card">
+                        <h5 class="card-header text-center">USER LOGIN</h5>
+                        <div class="card-body">
+                            <div class="row justify-content-md-center" style="margin-bottom:15px;">
+                                <div class="col-md-8">
+                                    <div class="form-label-group mt-3">
+                                        <label asp-for="Input.Email">Email address</label>
+                                        <input type="email" asp-for="Input.Email" class="form-control" required autofocus>
+                                        <span asp-validation-for="Input.Email" class="text-danger" style="font-size:x-small;font-style:italic;"></span>
+                                    </div>
+                                    <div class="form-label-group mt-3">
+                                        <label asp-for="Input.Password">Password</label>
+                                        <input type="password" asp-for="Input.Password" class="form-control" required>
+                                        <span asp-validation-for="Input.Password" class="text-danger" style="font-size:x-small;font-style:italic;"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+                            @if (!string.IsNullOrWhiteSpace(ViewData["Errormessage"]?.ToString()))
+                            {
+                                <div class="alert alert-danger" role="alert" style="margin-top:10px;margin-bottom:0px;">
+                                    @ViewData["Errormessage"]?.ToString()
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <environment include="Development,Production">
+        <script type="text/javascript" src="~/js/jquery.min.js"></script>
+        <script type="text/javascript" src="~/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="~/js/popper.min.js"></script>
+        <script type="text/javascript" src="~/js/site.min.js"></script>
+    </environment>
+    <environment include="Development,Production">
+        <script src="~/Identity/lib/jquery-validation/dist/jquery.validate.js"></script>
+        <script src="~/Identity/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    </environment>
+</body>
+</html>

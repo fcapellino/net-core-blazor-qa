@@ -1,0 +1,22 @@
+﻿@inherits PaginatorComponent
+
+<ul class="pagination pagination-sm">
+    <li class="page-item @(CurrentPage.Equals(1) ? "disabled" : string.Empty)">
+        <button class="page-link" @onclick="@(async() => await PreviousPageButtonClickedAsync())">&laquo;</button>
+    </li>
+    @{
+        if (TotalPages > 0)
+        {
+            for (var i = 1; i <= TotalPages; i++)
+            {
+                var currentIndex = i;
+                <li class="page-item @(CurrentPage.Equals(currentIndex) ? "active" : string.Empty)">
+                    <button class="page-link" @onclick="@(async () => await PageButtonClickedAsync(currentIndex))">@i</button>
+                </li>
+            }
+        }
+    }
+    <li class="page-item @((CurrentPage.Equals(TotalPages) || TotalPages.Equals(0))? "disabled" : string.Empty)">
+        <button class="page-link" @onclick="@(async() => await NextPageButtonClickedAsync())">&raquo;</button>
+    </li>
+</ul>

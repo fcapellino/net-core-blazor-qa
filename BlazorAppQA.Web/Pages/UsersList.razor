@@ -1,0 +1,49 @@
+﻿@page "/users"
+@inherits UsersListComponent
+
+<div class="row">
+    <div class="col-md-8 order-md-1">
+        <div class="row">
+            <div class="input-group col-md-12 mb-3">
+                <input type="text" @bind="SearchQuery" @onkeyup="OnKeyUpEventAsync" class="form-control" aria-describedby="button-addon2" style="height:auto;">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="button-addon2" @onclick="OnSearchAsync">Search</button>
+                </div>
+            </div>
+        </div>
+        <div class="list-group">
+            @if (UsersList != null && UsersList.Any())
+            {
+                @foreach (dynamic user in UsersList)
+                {
+                    <div class="list-group-item list-group-item-action flex-column align-items-start" style="cursor:pointer;" @key="@user.ProtectedId" @onclick="@(()=>OnViewDetailsAsync(user.ProtectedId.ToString()))">
+                        <div class="media position-relative">
+                            <div class="mr-3 mt-1">
+                                <img src="data:image/jpeg;base64,@user.Base64AvatarImage" style="border:1px solid black;" alt="Smiley face" height="100" width="100">
+                            </div>
+                            <div class="media-body">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mt-0">@user.UserName</h5>
+                                </div>
+                                <p>@user.Biography</p>
+                                <div style="text-align:end;">
+                                    <small class="text-muted">Questions: @user.TotalQuestions.ToString("D2") &nbsp&nbsp Answers: @user.TotalAnswers.ToString("D2")</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <small>NO DATA AVAILABLE</small>
+            }
+        </div>
+        <div style="margin-top:10px;">
+            <Paginator TotalItemsCount="@TotalUsersCount" CurrentPage="@CurrentPage" PageSize="@PageSize" PageChanged="@OnPageChangeAsync"></Paginator>
+        </div>
+    </div>
+    <div class="col-md-4 order-md-2">
+        <RightPanel />
+    </div>
+</div>

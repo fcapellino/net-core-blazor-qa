@@ -1,0 +1,102 @@
+﻿@page
+@model BlazorAppQA.Web.Areas.Identity.Pages.Account.RegisterModel
+@{
+    ViewData["Title"] = "Register";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BlazorAppQA.Web</title>
+    <base href="~/" />
+
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/fontawesome.min.css" rel="stylesheet" />
+    <link href="~/css/site.min.css" rel="stylesheet" />
+</head>
+<body>
+    <main role="main" class="container" style="padding-top:30px;padding-bottom:10px;">
+        <div class="row justify-content-md-center">
+            <div class="col-md-7">
+                <form class="form-signin" method="post" enctype="multipart/form-data">
+                    <div class="card">
+                        <h5 class="card-header text-center">NEW USER ACCOUNT REGISTRATION</h5>
+                        <div class="card-body">
+                            <div class="row justify-content-md-center">
+                                <div class="col-md-7">
+                                    <div class="form-label-group mt-3">
+                                        <label asp-for="Input.UserName">Username</label>
+                                        <input type="text" asp-for="Input.UserName" class="form-control">
+                                        <span asp-validation-for="Input.UserName" class="text-danger" style="font-size:x-small;font-style:italic;"></span>
+                                    </div>
+                                    <div class="form-label-group mt-3">
+                                        <label asp-for="Input.Email">Email address</label>
+                                        <input type="text" asp-for="Input.Email" class="form-control">
+                                        <span asp-validation-for="Input.Email" class="text-danger" style="font-size:x-small;font-style:italic;"></span>
+                                    </div>
+                                    <div class="row justify-content-md-center">
+                                        <div class="col-md-6">
+                                            <div class="form-label-group mt-3">
+                                                <label asp-for="Input.Password">Password</label>
+                                                <input type="password" asp-for="Input.Password" class="form-control">
+                                                <span asp-validation-for="Input.Password" class="text-danger" style="font-size:x-small;font-style:italic;"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-label-group mt-3">
+                                                <label asp-for="Input.ConfirmedPassword">Confirm password</label>
+                                                <input type="password" asp-for="Input.ConfirmedPassword" class="form-control">
+                                                <span asp-validation-for="Input.ConfirmedPassword" class="text-danger" style="font-size:x-small;font-style:italic;"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mt-3">
+                                        <label asp-for="Input.Image">Add profile image</label>
+                                        <input type="file" asp-for="Input.Image" accept="image/x-png,image/jpeg" class="form-control" style="height:40px;" />
+                                        <span asp-validation-for="Input.Image" class="text-danger" style="font-size:x-small;font-style:italic;"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-label-group mt-3">
+                                        <label asp-for="Input.LinkedinUrl">Linked In profile</label>
+                                        <input type="text" asp-for="Input.LinkedinUrl" class="form-control">
+                                        <span asp-validation-for="Input.LinkedinUrl" class="text-danger" style="font-size:x-small;font-style:italic;"></span>
+                                    </div>
+                                    <div class="form-label-group mt-3 mb-3">
+                                        <label asp-for="Input.Biography">Biography</label>
+                                        <textarea asp-for="Input.Biography" class="form-control" style="height:200px;"></textarea>
+                                        <span asp-validation-for="Input.Biography" class="text-danger" style="font-size:x-small;font-style:italic;"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+                            @if (!string.IsNullOrWhiteSpace(ViewData["Errormessage"]?.ToString()))
+                            {
+                                <div class="alert alert-danger" role="alert" style="margin-top:10px;margin-bottom:0px;">
+                                    @ViewData["Errormessage"]?.ToString()
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <environment include="Development,Production">
+        <script type="text/javascript" src="~/js/jquery.min.js"></script>
+        <script type="text/javascript" src="~/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="~/js/popper.min.js"></script>
+        <script type="text/javascript" src="~/js/site.min.js"></script>
+    </environment>
+    <environment include="Development,Production">
+        <script src="~/Identity/lib/jquery-validation/dist/jquery.validate.js"></script>
+        <script src="~/Identity/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    </environment>
+</body>
+</html>
